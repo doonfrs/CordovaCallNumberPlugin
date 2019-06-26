@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.content.pm.PackageManager;
+import java.lang.reflect.Method;
 
 public class CFCallNumber extends CordovaPlugin {
   public static final int CALL_REQ_CODE = 0;
@@ -40,12 +41,38 @@ public class CFCallNumber extends CordovaPlugin {
       }
     } else if (action.equals("isCallSupported")) {
         this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, isTelephonyEnabled()));
+    }else if(action.equals("endCall"))
+    {
+      endCall();
     } else {
       return false;
     }
 
     return true;
   }
+
+
+
+
+  private void endCall() {
+      TelephonyManager tm = (TelephonyManager) cordova.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+      try {
+          Class c = Class.forName(tm.getClass().getName());
+          Method m = c.getDeclaredMethod("getITelephony");
+          m.setAccessible(true);
+          Object telephonyService = m.invoke(tm);
+
+          c = Class.forName(telephonyService.getClass().getName());
+          m = c.getDeclaredMethod("endCall");
+          m.setAccessible(true);
+          m.invoke(telephonyService);
+          callbackContext.success();
+      } catch (Exception e) {
+          e.printStackTrace();
+          callbackContext.error("CouldNotEndCall");
+      }
+  }
+
 
   public void onRequestPermissionResult(int requestCode, String[] permissions,
                                         int[] grantResults) throws JSONException {
