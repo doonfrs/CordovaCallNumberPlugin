@@ -1,3 +1,16 @@
+CordovaCallNumberPlugin + endCall Support (Android Only)
+=======================
+The new function endCall will only support android.
+This Project is not maintained.
+
+To end current active phone call, use the following function (Android Only, IOS not supported)
+Use the plugin in your JS file:
+``` javascript
+window.plugins.CallNumber.endCall(onSuccess, onError);
+```
+
+
+
 CordovaCallNumberPlugin
 =======================
 
